@@ -1,0 +1,139 @@
+
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Анкета</title>
+        <style>
+            body {
+                background: #121212;
+                color: #ffffff;
+                font-family: monospace;
+                padding: 20px;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
+            }
+            .container {
+                width: 90%;
+                max-width: 800px;
+                margin: 0 auto 20px;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 20px;
+                box-sizing: border-box;
+                background: rgba(30, 30, 30, 0.9);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                position: relative;
+            }
+            .container::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border-radius: 15px;
+                background: linear-gradient(45deg, rgba(255, 126, 95, 0.3), rgba(254, 180, 123, 0.3));
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .container:hover::before {
+                opacity: 1;
+            }
+            .container:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            }
+            .divider {
+                border-top: 1px dashed rgba(255, 255, 255, 0.2);
+                margin: 15px 0;
+            }
+            .question {
+                font-size: 18px;
+                font-weight: bold;
+                color: #ffffff;
+            }
+            .answer {
+                color: #e0e0e0;
+                margin-top: 10px;
+                font-size: 14px;
+                font-weight: normal;
+            }
+            .user-data {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #e0e0e0;
+            }
+            @media (max-width: 768px) {
+                .container {
+                    width: 95%;
+                    padding: 15px;
+                }
+                .question {
+                    font-size: 16px;
+                }
+                .answer, .user-data {
+                    font-size: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="question">Сколько вам лет?</div>
+            <div class="divider"></div>
+            <div class="answer">52</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Имели ли опыт работы в службах поддержки / обратной связи?</div>
+            <div class="divider"></div>
+            <div class="answer">Нет</div>
+        </div>
+
+        <div class="container">
+            <div class="question">На чём сосредоточен наш проект?</div>
+            <div class="divider"></div>
+            <div class="answer">На создании кламси Standoff 2</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Сколько времени вы готовы уделять работе?</div>
+            <div class="divider"></div>
+            <div class="answer">10 часов</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Покажите свой словарный запас. Продемонстрируйте свою грамотность и словарный запас рассказав какую-либо историю</div>
+            <div class="divider"></div>
+            <div class="answer">ни хачу</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Часто ли вы пользуетесь кряками от Grape Crack?</div>
+            <div class="divider"></div>
+            <div class="answer">Нет, Я не пользуюсь кряками в том числе от Grape Crack</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Есть ли у вас ПК?</div>
+            <div class="divider"></div>
+            <div class="answer">Нет</div>
+        </div>
+
+        <div class="container">
+            <div class="question">Данные:</div>
+            <div class="divider"></div>
+            <div class="user-data">Юзернейм: @ravenere</div>
+            <div class="user-data">Имя: raven </div>
+            <div class="user-data">Айди: 7125674237</div>
+        </div>
+    </body>
+    </html>
+    
