@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #444;
+            margin-right: 10px;
+        }
+
+        .chat-header span {
+            font-size: 18px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 80px; 
+        }
+
+        .message {
+            max-width: 70%;
+            min-width: 75px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #444;
+            word-wrap: break-word;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #333;
+            color: white;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background-color: #333;
+            color: white;
+        }
+
+        .message-text {
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #333;
+            gap: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            border-top: 1px solid #444;
+            border-radius: 15px 15px 0 0;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            color: white;
+            outline: none;
+            flex: 1;
+        }
+
+        .send-button {
+            padding: 10px;
+            border-radius: 50%;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .send-button:hover {
+            background-color: #1e1e1e;
+        }
+
+        .send-button:active {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="https://0x0.st/s/BYUCRyScF7joBPlyEdE3yg/8H5A.jpg" alt="Аватар">
+            <span>Gemini</span>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="Введите сообщение...">
+            <button class="send-button" id="send-button">×</button>
+        </div>
+    </div>
+    <script>
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const sendButton = document.getElementById('send-button');
+
+        const API_KEY = 'AIzaSyDO9TS2_SKhcHghOetIhVb21847rc0YkJk'; 
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`; 
+
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        async function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (messageText === '') return;
+
+            addMessage('user', messageText);
+            messageInput.value = '';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: messageText
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json(); 
+                    throw new Error(`Ошибка HTTP: ${response.status}, ${JSON.stringify(errorData)}`);
+                }
+
+                const data = await response.json();
+                if (!data.candidates || !data.candidates[0].content.parts[0].text) {
+                    throw new Error('Некорректный ответ от API');
+                }
+
+                const botMessage = data.candidates[0].content.parts[0].text;
+                addMessage('bot', botMessage);
+            } catch (error) {
+                console.error('Ошибка при запросе к Gemini:', error);
+                addMessage('bot', `Ошибка: ${error.message}`);
+            }
+        }
+
+        function addMessage(sender, text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+
+            const messageTextElement = document.createElement('div');
+            messageTextElement.classList.add('message-text');
+            messageTextElement.textContent = text;
+
+            const messageTimeElement = document.createElement('div');
+            messageTimeElement.classList.add('message-time');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageTimeElement.textContent = timeString;
+
+            messageElement.appendChild(messageTextElement);
+            messageElement.appendChild(messageTimeElement);
+
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
